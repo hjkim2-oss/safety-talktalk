@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>안전 TalkTalk</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --red:#E8341A;--red-light:#FFF1EE;--red-mid:#FFD6CD;
+  --ink:#111318;--ink2:#4B5058;--ink3:#9EA5B0;
+  --surface:#F5F5F7;--white:#FFFFFF;--border:#E8E8EC;
+  --ok:#0BA360;--warn:#D97706;--info:#2563EB;--purple:#6D28D9;
+  --radius:14px;--radius-lg:20px;--radius-xl:28px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
+  --shadow-md:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Pretendard',system-ui,sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(245,245,247,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;cursor:pointer;letter-spacing:-.3px}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-center{display:flex;gap:2px}
+.ntab{padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink3);border:none;border-radius:30px;transition:all .18s;font-family:inherit}
+.ntab.on{background:var(--ink);color:var(--white)}
+.admin-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:30px;font-size:12px;font-weight:600;background:var(--white);color:var(--ink2);cursor:pointer;border:1px solid var(--border);transition:all .18s;font-family:inherit}
+.admin-btn:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.admin-nav-bg{background:rgba(17,19,24,.92)!important;border-color:rgba(255,255,255,.08)!important}
+.admin-nav-bg .logo{color:var(--white)}
+.admin-nav-bg .ntab{color:rgba(255,255,255,.4)}
+.admin-nav-bg .ntab.on{background:var(--red);color:var(--white)}
+.admin-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(232,52,26,.2);color:var(--red);letter-spacing:.06em}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-bg.show{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-xl);padding:28px;width:360px;max-width:90vw;box-shadow:var(--shadow-md);animation:popUp .28s cubic-bezier(.34,1.4,.64,1)}
+@keyframes popUp{from{transform:scale(.94) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.3px}
+.modal p{font-size:13px;color:var(--ink3);margin-bottom:1.25rem;line-height:1.6}
+.modal-hint{font-size:11px;color:var(--ink3);margin-top:6px}
+.modal-btns{display:flex;gap:8px;margin-top:18px}
+
+/* ── HERO ── */
+.hero{padding:36px 24px 28px;text-align:center;position:relative;z-index:1}
+.hero-pill{display:inline-flex;align-items:center;gap:5px;background:var(--white);color:var(--red);font-size:10px;font-weight:700;padding:4px 11px;border-radius:30px;margin-bottom:14px;letter-spacing:.06em;border:1px solid var(--red-mid);box-shadow:0 1px 4px rgba(232,52,26,.1)}
+.hero-pill-dot{width:4px;height:4px;border-radius:50%;background:var(--red);animation:blink 2s infinite}
+.hero h1{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:10px;letter-spacing:-.8px}
+.hero h1 em{color:var(--red);font-style:normal}
+.hero-sub{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);border:none;border-radius:50px;padding:14px 32px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;box-shadow:0 4px 16px rgba(17,19,24,.2)}
+.hero-cta:hover{background:var(--red);box-shadow:0 4px 20px rgba(232,52,26,.3);transform:translateY(-1px)}
+
+/* ── CONTENT ── */
+.content{max-width:720px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1}
+.page{display:none}.page.on{display:block}
+.sec-hd{margin-bottom:20px}
+.sec-title{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.3px}
+.sec-sub{font-size:12px;color:var(--ink3);font-weight:400}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card-sm{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:12px}
+
+/* ── FORM ── */
+.flabel{font-size:11px;font-weight:600;color:var(--ink3);display:block;margin:14px 0 5px;letter-spacing:.06em;text-transform:uppercase}
+input[type=text],input[type=password],textarea,select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--surface);color:var(--ink);outline:none;transition:all .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--ink);background:var(--white);box-shadow:0 0 0 3px rgba(17,19,24,.06)}
+textarea{min-height:88px;resize:vertical;line-height:1.65}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── URGENCY ── */
+.urg-row{display:flex;gap:6px;margin-top:5px}
+.ubtn{flex:1;padding:9px 6px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;color:var(--ink3);font-family:inherit}
+.ubtn.uh{border-color:#FBBEB4;background:#FFF0EE;color:#B91C1C}
+.ubtn.um{border-color:#FCD34D;background:#FFFBEB;color:#92400E}
+.ubtn.ul{border-color:#86EFAC;background:#F0FDF4;color:#166534}
+.ubtn:not(.uh):not(.um):not(.ul):hover{border-color:var(--ink3)}
+
+/* ── BUTTONS ── */
+.btn{width:100%;padding:11px;font-size:13px;font-weight:600;border-radius:var(--radius);border:1px solid var(--border);background:var(--white);color:var(--ink);cursor:pointer;transition:all .18s;font-family:inherit}
+.btn:hover{background:var(--surface)}
+.btn-p{background:var(--red);color:var(--white);border-color:var(--red)}
+.btn-p:hover{background:#C92A14;border-color:#C92A14}
+.btn-dk{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.btn-dk:hover{background:#2A2D35;border-color:#2A2D35}
+.btn-sm{padding:7px 14px;font-size:12px;width:auto;border-radius:10px}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--ink3)}
+.btn-ghost:hover{background:var(--surface)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600}
+.br{background:#FEE2E2;color:#991B1B}.ba{background:#FEF3C7;color:#92400E}
+.bg{background:#DCFCE7;color:#166534}.bb{background:#DBEAFE;color:#1E40AF}
+.bgr{background:var(--surface);color:var(--ink2)}.bp{background:#EDE9FE;color:#5B21B6}
+.binfo{background:#E0F2FE;color:#0369A1}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.sbox{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;text-align:center;box-shadow:var(--shadow)}
+.snum{font-size:24px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.5px}
+.slbl{font-size:11px;color:var(--ink3);margin-top:4px;font-weight:500}
+
+/* ── FILTERS ── */
+.frow{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.fbtn{padding:6px 13px;font-size:12px;font-weight:600;border-radius:30px;border:1px solid var(--border);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s;font-family:inherit}
+.fbtn.on{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.fbtn:hover:not(.on){background:var(--surface)}
+
+/* ── VOICE ITEMS ── */
+.vitem{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:18px 20px;margin-bottom:8px;transition:box-shadow .2s;box-shadow:var(--shadow)}
+.vitem:hover{box-shadow:var(--shadow-md)}
+.vbadges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.vbody{font-size:14px;color:var(--ink);line-height:1.7;margin-bottom:5px;font-weight:400}
+.vmeta{font-size:12px;color:var(--ink3)}
+.vactions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.vphoto{margin:8px 0;border-radius:10px;overflow:hidden;max-height:160px}
+.vphoto img{width:100%;height:160px;object-fit:cover;display:block}
+.ai-classify-bar{background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:10px;padding:10px 13px;margin:8px 0;display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.85)}
+.ai-classify-bar .ai-icon{font-size:14px}
+
+/* ── RA ITEMS ── */
+.raitem{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:18px 20px;margin-bottom:8px;box-shadow:var(--shadow)}
+.ratitle{font-size:15px;font-weight:700;color:var(--ink);margin:8px 0 5px;letter-spacing:-.2px}
+.radesc{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:10px}
+.score-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.spill{font-size:11px;padding:3px 9px;border-radius:6px;background:var(--surface);color:var(--ink2);font-weight:600}
+.rbar{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface);border-radius:10px;font-size:12px;color:var(--ink2);margin-bottom:10px}
+.mlist{list-style:none;padding:0}
+.mlist li{font-size:13px;color:var(--ink2);padding:7px 0;border-top:1px solid var(--border);line-height:1.6;display:flex;gap:10px}
+.mlist li:first-child{border-top:none}
+.mlist li::before{content:"→";color:var(--red);flex-shrink:0;font-weight:700}
+.divl{height:1px;background:var(--border);margin:14px 0}
+
+/* ── SPINNER ── */
+.spn{width:13px;height:13px;border:2px solid rgba(232,52,26,.15);border-top-color:var(--red);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:5px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:40px 1rem;color:var(--ink3)}
+.ei{font-size:36px;margin-bottom:10px}
+.et{font-size:13px;line-height:1.6}
+
+/* ── SUCCESS ── */
+.sw{text-align:center;padding:32px 1rem}
+.sc{width:64px;height:64px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.ai-result-card{background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:16px;padding:16px 20px;margin:16px 0;text-align:left}
+.ai-result-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.ai-result-level{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:-.3px}
+.ai-result-reason{font-size:12px;color:rgba(255,255,255,.6);line-height:1.6}
+
+/* ── REPORT ── */
+.report-hero{background:var(--ink);color:var(--white);border-radius:var(--radius-xl);padding:28px;margin-bottom:14px;position:relative;overflow:hidden}
+.report-hero::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(232,52,26,.08)}
+.report-hero h2{font-size:18px;font-weight:700;margin-bottom:4px;position:relative;letter-spacing:-.2px}
+.report-hero p{font-size:12px;color:rgba(255,255,255,.4);position:relative}
+.rs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:18px;position:relative}
+.rsbox{background:rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,.06)}
+.rsnum{font-size:28px;font-weight:700;color:var(--white);letter-spacing:-.5px}
+.rslbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;font-weight:500}
+.info-bar{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:var(--radius-lg);padding:14px 16px;font-size:13px;color:#1D4ED8;line-height:1.65}
+.dept-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+
+/* ── DASHBOARD ── */
+.dash-hero{background:linear-gradient(135deg,var(--ink) 0%,#1e1b4b 100%);border-radius:var(--radius-xl);padding:28px;margin-bottom:14px;color:var(--white);position:relative;overflow:hidden}
+.dash-hero::after{content:'';position:absolute;right:-60px;bottom:-60px;width:220px;height:220px;border-radius:50%;background:rgba(232,52,26,.07)}
+.dash-hero h2{font-size:20px;font-weight:700;margin-bottom:4px;position:relative;letter-spacing:-.3px}
+.dash-hero p{font-size:12px;color:rgba(255,255,255,.4);position:relative}
+.live-dot{display:inline-flex;align-items:center;gap:5px;background:rgba(11,163,96,.15);border:1px solid rgba(11,163,96,.3);border-radius:30px;padding:3px 10px;font-size:11px;font-weight:700;color:#4ade80;margin-bottom:14px}
+.live-pulse{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 1.2s infinite}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative}
+.dash-sbox{background:rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,.06)}
+.dash-snum{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.dash-slbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;font-weight:500}
+.risk-bars{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.risk-bar-row{display:flex;align-items:center;gap:10px}
+.risk-bar-label{font-size:12px;color:var(--ink2);font-weight:600;width:48px;flex-shrink:0}
+.risk-bar-track{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}
+.risk-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.risk-bar-count{font-size:12px;color:var(--ink3);font-weight:600;width:20px;text-align:right;flex-shrink:0}
+.feed-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.feed-item:last-child{border-bottom:none}
+.feed-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.feed-body{flex:1;min-width:0}
+.feed-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-meta{font-size:11px;color:var(--ink3)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.feature-box{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 14px;box-shadow:var(--shadow)}
+.feature-icon{font-size:22px;margin-bottom:8px}
+.feature-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;letter-spacing:-.2px}
+.feature-desc{font-size:11px;color:var(--ink3);line-height:1.5}
+
+/* ── PHOTO UPLOAD ── */
+.photo-upload-area{border:1.5px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface);position:relative;overflow:hidden}
+.photo-upload-area:hover{border-color:var(--ink3);background:var(--white)}
+.photo-upload-area.has-photo{border-style:solid;border-color:var(--ok);background:var(--white);padding:0}
+.photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.photo-preview{width:100%;max-height:180px;object-fit:cover;border-radius:calc(var(--radius) - 2px);display:block}
+.photo-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:20px;padding:3px 8px;font-size:11px;cursor:pointer;z-index:2}
+.photo-upload-text{font-size:13px;font-weight:600;color:var(--ink3);margin-bottom:3px}
+.photo-upload-sub{font-size:11px;color:var(--ink3)}
+
+/* ── SETUP GUIDE ── */
+.guide{background:var(--ink);border-radius:var(--radius-xl);padding:24px;margin-bottom:14px;color:var(--white)}
+.guide h3{font-size:15px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:7px}
+.step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--red);color:var(--white);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px}
+.step-desc{font-size:12px;color:rgba(255,255,255,.4);line-height:1.6}
+.code-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:monospace;font-size:11px;color:#FF7B5E;margin:7px 0;word-break:break-all;cursor:pointer;transition:border .2s}
+.code-box:hover{border-color:var(--red)}
+.input-highlight{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(232,52,26,.1)!important}
+
+/* ── CONNECTED BADGE ── */
+.connected-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:12px;margin-bottom:14px}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:#16A34A;animation:blink 1.5s infinite}
+.conn-text{font-size:13px;font-weight:600;color:#166534}
+
+/* ── DIRECT RA PANEL ── */
+.dashed-panel{border:1.5px dashed var(--border);border-radius:var(--radius-xl);padding:20px;margin-bottom:12px;text-align:center;transition:border-color .2s}
+.dashed-panel:hover{border-color:var(--ink3)}
+
+/* ── AI CLASSIFY BADGE ── */
+.aibadge-imm{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+.aibadge-cau{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
+.aibadge-obs{background:#DBEAFE;color:#1E40AF;border:1px solid #BFDBFE}
+
+@media(max-width:580px){
+  .g2{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  nav{padding:0 14px}
+  .hero{padding:44px 16px 36px}
+  .content{padding:0 14px 60px}
+  .hero h1{font-size:2.4rem}
+  .feature-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-stats{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- 직원 nav -->
+<nav id="nav-user">
+  <div class="logo" onclick="goUser('submit')">
+    <div class="logo-dot"></div>
+    안전 TalkTalk
+  </div>
+  <div class="nav-center">
+    <button class="ntab on" id="utab-submit" onclick="goUser('submit')">신고하기</button>
+    <button class="ntab" id="utab-dashboard" onclick="goUser('dashboard')">대시보드</button>
+  </div>
+  <button class="admin-btn" onclick="openLogin()">관리자</button>
+</nav>
+
+<!-- 관리자 nav -->
+<nav id="nav-admin" class="admin-nav-bg" style="display:none">
+  <div class="logo" onclick="goAdmin('voices')" style="cursor:pointer;color:white">
+    <div class="logo-dot"></div>
+    안전 TalkTalk
+    <span class="admin-tag">ADMIN</span>
+  </div>
+  <div class="nav-center">
+    <button class="ntab on" onclick="goAdmin('voices')">소리함</button>
+    <button class="ntab" onclick="goAdmin('ra')">위험성평가</button>
+    <button class="ntab" onclick="goAdmin('report')">참여현황</button>
+    <button class="ntab" onclick="goAdmin('setup')">설정</button>
+  </div>
+  <button class="admin-btn" onclick="logout()" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.1)">로그아웃</button>
+</nav>
+
+<!-- 로그인 모달 -->
+<div class="modal-bg" id="login-modal">
+  <div class="modal">
+    <h3>관리자 로그인</h3>
+    <p>소리함·위험성평가·참여 현황은<br>관리자만 확인할 수 있습니다.</p>
+    <span class="flabel">비밀번호</span>
+    <input type="password" id="pw-input" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')tryLogin()"/>
+    <div class="modal-hint">기본 비밀번호: 1234</div>
+    <div class="modal-btns">
+      <button class="btn btn-dk" onclick="tryLogin()">로그인</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeLogin()">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 직원 영역 -->
+<div id="user-area">
+  <div id="hero-section" class="hero">
+    <h1 style="font-size:clamp(1.4rem,3.5vw,2rem);font-weight:700;letter-spacing:-.3px;margin-bottom:10px">🚨 슈피겐코리아 — 위험제보</h1>
+    <p class="hero-sub" style="font-size:13px;margin-bottom:20px">위험 요소를 발견하셨다면 아래 양식으로 제출해 주세요.</p>
+  </div>
+
+  <div class="content">
+
+    <!-- 신고 폼 -->
+    <div id="p-submit" class="page on">
+      <div id="form-card" class="card">
+        <div class="sec-hd">
+          <div class="sec-title">불편하거나 위험한 곳이 있나요?</div>
+          <div class="sec-sub">작은 것도 좋아요 — 알려주시면 함께 고쳐나갈게요 😊</div>
+        </div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">* 산업안전보건법 위험성평가 근로자 참여 프로그램</div>
+
+        <div class="g2">
+          <div><span class="flabel">이름</span><input id="fn" type="text" placeholder="홍길동"/></div>
+          <div><span class="flabel">부서</span><input id="fd" type="text" placeholder="예: 영업팀"/></div>
+        </div>
+
+        <span class="flabel">발생 장소</span>
+        <input id="fl" type="text" placeholder="예: 3층 복도, 주차장 입구"/>
+
+        <span class="flabel">긴급도</span>
+        <div class="urg-row">
+          <button class="ubtn" id="uh" onclick="selUrg('h')">🔴 즉시 조치</button>
+          <button class="ubtn" id="um" onclick="selUrg('m')">🟡 빠른 조치</button>
+          <button class="ubtn" id="ul2" onclick="selUrg('l')">🟢 여유 있음</button>
+        </div>
+
+        <span class="flabel">위험 내용</span>
+        <textarea id="fcon" placeholder="발견한 위험 상황을 구체적으로 적어주세요.&#10;예) 3층 비상구 앞 박스 적재로 통로가 막혀 있습니다."></textarea>
+
+        <!-- 사진 첨부 -->
+        <span class="flabel">사진 첨부 <span style="font-weight:400;text-transform:none;color:var(--ink3)">(선택)</span></span>
+        <div class="photo-upload-area" id="photo-area" onclick="document.getElementById('photo-input').click()">
+          <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)"/>
+          <div id="photo-placeholder">
+            <div style="font-size:28px;margin-bottom:6px">📷</div>
+            <div class="photo-upload-text">사진 찍거나 파일 선택</div>
+            <div class="photo-upload-sub">카메라로 바로 찍거나 갤러리에서 선택하세요</div>
+          </div>
+          <img id="photo-preview-img" class="photo-preview" style="display:none"/>
+        </div>
+        <button id="photo-remove-btn" style="display:none;margin-top:5px" class="btn btn-ghost btn-sm" onclick="removePhoto()">✕ 사진 제거</button>
+
+        <div style="margin-top:16px"><button class="btn btn-p" id="submit-btn" onclick="submitVoice()">제출하기</button></div>
+      </div>
+
+      <div id="success-card" style="display:none">
+        <div class="card">
+          <div class="sw">
+            <div class="sc">✓</div>
+            <div style="font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px">소중한 제보 감사해요!</div>
+            <div style="font-size:13px;color:var(--ink3);line-height:1.75;margin-bottom:16px">내용을 잘 받았습니다.<br>빠르게 확인하고 개선하겠습니다 🙏</div>
+            <div id="ai-classify-result" style="display:none">
+              <div class="ai-result-card">
+                <div class="ai-result-label">🤖 AI 위험 분류 결과</div>
+                <div class="ai-result-level" id="ai-level-text"></div>
+                <div class="ai-result-reason" id="ai-reason-text"></div>
+              </div>
+            </div>
+            <button class="btn btn-sm" onclick="resetForm()" style="margin:0 auto">또 신고하기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 대시보드 -->
+    <div id="p-dashboard" class="page">
+      <div id="dashboard-content"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 관리자 영역 -->
+<div id="admin-area" style="display:none">
+  <div class="content" style="padding-top:24px">
+
+    <!-- 소리함 관리 -->
+    <div id="p-voices" class="page on">
+      <div class="sec-hd">
+        <div class="sec-title">소리함</div>
+        <div class="sec-sub">접수된 안전 신고를 확인하고 위험성평가로 전환하세요</div>
+      </div>
+      <div class="stats" id="v-stats"></div>
+      <div class="frow" id="v-filters">
+        <button class="fbtn on" onclick="setVF('all',this)">전체</button>
+        <button class="fbtn" onclick="setVF('new',this)">미처리</button>
+        <button class="fbtn" onclick="setVF('conv',this)">평가전환됨</button>
+        <button class="fbtn" onclick="setVF('done',this)">처리완료</button>
+      </div>
+      <div id="v-list"></div>
+    </div>
+
+    <!-- 위험성평가 -->
+    <div id="p-ra" class="page">
+      <div class="sec-hd">
+        <div class="sec-title">위험성평가</div>
+        <div class="sec-sub">소리함 신고 → AI 자동 분석 → 위험성평가 항목 생성</div>
+      </div>
+      <div class="dashed-panel">
+        <div style="font-size:20px;margin-bottom:7px">📝</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px;letter-spacing:-.2px">작업 내용으로 직접 평가하기</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;line-height:1.6">소리함 신고 외에도 작업 내용을 입력해 AI 분석을 받을 수 있습니다</div>
+        <button class="btn btn-sm btn-p" onclick="toggleDirectRA()">직접 입력하기</button>
+      </div>
+      <div id="direct-ra-form" style="display:none" class="card">
+        <div class="g2">
+          <div><span class="flabel">부서</span><input id="ra-dept" placeholder="예: 총무팀"/></div>
+          <div><span class="flabel">작업 유형</span>
+            <select id="ra-wtype">
+              <option value="">선택하세요</option>
+              <option>사무 작업</option><option>고객 응대</option>
+              <option>현장 방문·외근</option><option>청소·시설 관리</option>
+              <option>배달·운반</option><option>기타</option>
+            </select>
+          </div>
+        </div>
+        <span class="flabel">작업 설명</span>
+        <textarea id="ra-desc" placeholder="작업 내용을 구체적으로 입력하세요."></textarea>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-p" onclick="runDirectRA()">AI 위험요인 분석하기 →</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleDirectRA()">취소</button>
+        </div>
+      </div>
+      <div class="stats" id="ra-stats"></div>
+      <div class="frow" id="ra-filters">
+        <button class="fbtn on" onclick="setRF('all',this)">전체</button>
+        <button class="fbtn" onclick="setRF('high',this)">위험(상)</button>
+        <button class="fbtn" onclick="setRF('mid',this)">위험(중)</button>
+        <button class="fbtn" onclick="setRF('low',this)">위험(하)</button>
+        <button class="fbtn" onclick="setRF('open',this)">미결</button>
+        <button class="fbtn" onclick="setRF('closed',this)">완료</button>
+      </div>
+      <div id="ra-list"></div>
+    </div>
+
+    <!-- 참여 현황 -->
+    <div id="p-report" class="page">
+      <div id="report-content"></div>
+    </div>
+
+    <!-- 설정 -->
+    <div id="p-setup" class="page">
+      <div class="sec-hd">
+        <div class="sec-title">설정</div>
+        <div class="sec-sub">구글 시트 연동 및 AI 기능 설정</div>
+      </div>
+
+      <!-- API 키 설정 -->
+      <div class="card-sm" style="background:#F0F0FF;border-color:#C7D2FE;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#4338CA;margin-bottom:6px">🤖 AI 자동 분류 설정 (Claude API)</div>
+        <div style="font-size:12px;color:#6366F1;margin-bottom:10px;line-height:1.6">
+          신고 접수 시 AI가 위험 등급을 자동 분류합니다.<br>
+          <strong>즉시 조치 / 주의 / 관찰</strong> 3단계로 분류하며, claude.ai에서 API 키를 발급받으세요.
+        </div>
+        <span class="flabel">Claude API 키</span>
+        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="font-family:monospace"/>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <button class="btn btn-sm" style="background:#4338CA;color:#fff;border-color:#4338CA;width:auto" onclick="saveApiKey()">저장</button>
+          <span id="api-key-status" style="font-size:12px;color:var(--ink3)"></span>
+        </div>
+      </div>
+
+      <div id="connected-bar" style="display:none" class="connected-bar">
+        <div class="conn-dot"></div>
+        <div class="conn-text">구글 시트 연동됨</div>
+        <div style="font-size:12px;color:#16A34A;margin-left:auto" id="conn-url-preview"></div>
+      </div>
+
+      <div class="guide">
+        <h3>📋 구글 시트 연동 방법 (5분이면 완료!)</h3>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">구글 시트 새로 만들기</div>
+            <div class="step-desc">sheets.google.com 에서 새 스프레드시트를 만드세요.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Apps Script 열기</div>
+            <div class="step-desc">상단 메뉴 → 확장 프로그램 → Apps Script 클릭</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">아래 코드 전체 복사 후 붙여넣기</div>
+            <div class="step-desc">기존 내용을 모두 지우고 아래 코드를 붙여넣으세요</div>
+            <div class="code-box" id="apps-script-code" onclick="copyCode()" title="클릭하면 복사됩니다">클릭하면 코드가 복사됩니다 📋</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:3px">👆 클릭하면 자동 복사됩니다</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">저장 후 배포</div>
+            <div class="step-desc">저장(Ctrl+S) → 배포 → 새 배포 → 유형: 웹 앱 → 액세스: 모든 사용자 → 배포</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">배포 URL을 아래에 붙여넣기</div>
+            <div class="step-desc">배포 후 나오는 URL을 복사해서 아래에 붙여넣으세요</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="flabel">구글 Apps Script 배포 URL</span>
+        <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/.../exec"/>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-p" onclick="saveSheetURL()">연동 저장하기</button>
+          <button class="btn btn-ghost btn-sm" onclick="testConnection()">연결 테스트</button>
+        </div>
+        <div id="url-status" style="font-size:13px;margin-top:10px;display:none"></div>
+      </div>
+
+      <div class="card-sm" style="background:var(--red-light);border-color:var(--red-mid)">
+        <div style="font-size:12px;color:var(--red);font-weight:700;margin-bottom:5px">연동하면 이렇게 됩니다</div>
+        <div style="font-size:13px;color:#C92A14;line-height:1.7">
+          직원이 제보 접수 → 구글 시트에 자동 저장<br>
+          관리자 비밀번호 변경도 설정 탭에서 가능<br>
+          시트에서 필터·정렬·차트 자유롭게 활용
+        </div>
+      </div>
+
+      <div class="card-sm">
+        <span class="flabel">관리자 비밀번호 변경</span>
+        <div class="g2">
+          <input type="password" id="new-pw1" placeholder="새 비밀번호"/>
+          <input type="password" id="new-pw2" placeholder="새 비밀번호 확인"/>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn btn-sm btn-dk" onclick="changePW()">비밀번호 변경</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_CODE = `function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 상태 업데이트 요청
+    if (data.action === 'update') {
+      var sheet = ss.getSheetByName('안전신고');
+      if (sheet) {
+        var rows = sheet.getDataRange().getValues();
+        for (var i = 1; i < rows.length; i++) {
+          if (String(rows[i][0]) === String(data.id)) {
+            sheet.getRange(i + 1, 9).setValue(data.status);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({result:'ok'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 신규 신고 접수
+    var sheet = ss.getSheetByName('안전신고');
+    if (!sheet) {
+      sheet = ss.insertSheet('안전신고');
+      sheet.appendRow(['ID','접수일시','이름','부서','장소','긴급도','AI분류','내용','상태']);
+      sheet.getRange(1,1,1,9).setFontWeight('bold').setBackground('#E8341A').setFontColor('#ffffff');
+    }
+    sheet.appendRow([
+      data.id, data.date, data.name, data.dept,
+      data.loc || '-', data.urgency || '-',
+      data.aiLevel || '-', data.content, '접수됨'
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({result:'ok'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({result:'error',msg:err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  // 소리함 목록 반환
+  if (e && e.parameter && e.parameter.action === 'list') {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('안전신고');
+    if (!sheet) {
+      return ContentService.createTextOutput(JSON.stringify({result:'ok', data:[]}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    var rows = sheet.getDataRange().getValues();
+    if (rows.length <= 1) {
+      return ContentService.createTextOutput(JSON.stringify({result:'ok', data:[]}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    var voices = rows.slice(1).map(function(r) {
+      var st = r[8];
+      return {
+        id: r[0], date: r[1], name: r[2], dept: r[3],
+        loc: r[4] === '-' ? '' : String(r[4]),
+        urgency: r[5] === '-' ? null : String(r[5]),
+        aiLevel: r[6] === '-' ? null : String(r[6]),
+        content: r[7],
+        status: st === '처리완료' ? 'done' : st === '평가전환됨' ? 'converted' : 'new',
+        conv: st === '평가전환됨',
+        type: 'safety', photo: null, aiReason: null, cat: ''
+      };
+    });
+    return ContentService.createTextOutput(JSON.stringify({result:'ok', data:voices}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({result:'ok',msg:'안전TalkTalk 연결됨'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+let V=[], RA=[];
+let ADMIN_PW = localStorage.getItem('tt_pw')||'1234';
+let SHEET_URL = localStorage.getItem('tt_sheet_url')||'';
+let API_KEY = localStorage.getItem('tt_api_key')||'';
+let isAdmin=false, vf='all', rf='all';
+let selU=null;
+let photoData=null;
+
+try{V=JSON.parse(localStorage.getItem('tt_v')||'[]')}catch(e){V=[]}
+try{RA=JSON.parse(localStorage.getItem('tt_r')||'[]')}catch(e){RA=[]}
+
+function save(){
+  localStorage.setItem('tt_v',JSON.stringify(V));
+  localStorage.setItem('tt_r',JSON.stringify(RA));
+}
+
+document.getElementById('apps-script-code').textContent = APPS_SCRIPT_CODE;
+
+function copyCode(){
+  navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(()=>{
+    const el=document.getElementById('apps-script-code');
+    el.style.borderColor='var(--ok)';
+    el.textContent='✅ 복사됨! Apps Script에 붙여넣기 하세요';
+    setTimeout(()=>{el.style.borderColor='';el.textContent=APPS_SCRIPT_CODE;},2500);
+  });
+}
+
+/* ── 로그인 ── */
+function openLogin(){document.getElementById('login-modal').classList.add('show');setTimeout(()=>document.getElementById('pw-input').focus(),100)}
+function closeLogin(){document.getElementById('login-modal').classList.remove('show');document.getElementById('pw-input').value=''}
+function tryLogin(){
+  const pw=document.getElementById('pw-input').value;
+  if(pw===ADMIN_PW){
+    isAdmin=true;closeLogin();
+    document.getElementById('nav-user').style.display='none';
+    document.getElementById('nav-admin').style.display='flex';
+    document.getElementById('user-area').style.display='none';
+    document.getElementById('admin-area').style.display='';
+    goAdmin('voices');
+  }else{
+    const inp=document.getElementById('pw-input');
+    inp.classList.add('input-highlight');
+    inp.value='';inp.placeholder='비밀번호가 틀렸습니다 ❌';
+    setTimeout(()=>{inp.classList.remove('input-highlight');inp.placeholder='비밀번호 입력'},1500);
+  }
+}
+function logout(){
+  isAdmin=false;
+  document.getElementById('nav-admin').style.display='none';
+  document.getElementById('nav-user').style.display='flex';
+  document.getElementById('admin-area').style.display='none';
+  document.getElementById('user-area').style.display='';
+}
+document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLogin()});
+
+/* ── 네비 ── */
+function goUser(p){
+  document.querySelectorAll('#user-area .page').forEach(el=>el.classList.remove('on'));
+  document.getElementById('p-'+p).classList.add('on');
+  document.querySelectorAll('#nav-user .ntab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('utab-'+p).classList.add('on');
+  const hero=document.getElementById('hero-section');
+  if(p==='dashboard'){hero.style.display='none';renderDashboard();}
+  else{hero.style.display='';}
+}
+function goAdmin(p){
+  document.querySelectorAll('#admin-area .page').forEach(el=>el.classList.remove('on'));
+  document.getElementById('p-'+p).classList.add('on');
+  document.querySelectorAll('#nav-admin .ntab').forEach((t,i)=>{
+    t.classList.toggle('on',['voices','ra','report','setup'][i]===p);
+  });
+  if(p==='voices') renderVoices();
+  if(p==='ra') renderRA();
+  if(p==='report') renderReport();
+  if(p==='setup') initSetup();
+}
+
+/* ── 사진 ── */
+function handlePhoto(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  if(file.size>5*1024*1024){alert('5MB 이하 사진만 첨부 가능합니다.');return;}
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    photoData=ev.target.result;
+    document.getElementById('photo-placeholder').style.display='none';
+    const img=document.getElementById('photo-preview-img');
+    img.src=photoData;img.style.display='block';
+    document.getElementById('photo-area').classList.add('has-photo');
+    document.getElementById('photo-remove-btn').style.display='';
+  };
+  reader.readAsDataURL(file);
+}
+function removePhoto(){
+  photoData=null;
+  document.getElementById('photo-input').value='';
+  document.getElementById('photo-preview-img').style.display='none';
+  document.getElementById('photo-placeholder').style.display='';
+  document.getElementById('photo-area').classList.remove('has-photo');
+  document.getElementById('photo-remove-btn').style.display='none';
+}
+
+/* ── AI 위험 분류 ── */
+const AI_LEVEL_MAP = {h:'즉시 조치',m:'주의',l:'관찰'};
+async function classifyRisk(content, loc, urgency){
+  if(!API_KEY) return ruleBasedClassify(urgency, content);
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:200,
+        messages:[{role:'user',content:`직원이 안전 위험 요소를 신고했습니다. 위험 수준을 분류하세요.
+장소: ${loc||'미기재'}
+내용: ${content}
+JSON만 응답 (마크다운 없이):
+{"level":"즉시 조치 또는 주의 또는 관찰","reason":"한 문장으로 분류 이유"}`}]})});
+    const data=await res.json();
+    if(data.error) return ruleBasedClassify(urgency, content);
+    const txt=data.content.map(i=>i.text||'').join('');
+    return JSON.parse(txt.replace(/```json|```/g,'').trim());
+  }catch(e){return ruleBasedClassify(urgency, content);}
+}
+
+function ruleBasedClassify(urgency, content){
+  const c=content.toLowerCase();
+  if(urgency==='h'||c.includes('즉시')||c.includes('화재')||c.includes('추락')||c.includes('감전')||c.includes('출혈')){
+    return {level:'즉시 조치',reason:'즉각적인 인명 피해 가능성이 있는 위험 요소입니다.'};
+  }
+  if(urgency==='m'||c.includes('미끄')||c.includes('막혀')||c.includes('파손')||c.includes('누수')){
+    return {level:'주의',reason:'방치 시 사고로 이어질 수 있어 빠른 조치가 필요합니다.'};
+  }
+  return {level:'관찰',reason:'현재 직접적 위험은 낮으나 지속적인 모니터링이 필요합니다.'};
+}
+
+/* ── 폼 ── */
+function selUrg(u){
+  selU=u;
+  ['h','m','l'].forEach(x=>document.getElementById('u'+x).className='ubtn'+(u===x?' u'+x:''));
+}
+
+async function submitVoice(){
+  const n=document.getElementById('fn').value.trim();
+  const d=document.getElementById('fd').value.trim();
+  const c=document.getElementById('fcon').value.trim();
+  if(!n||!d){alert('이름과 부서를 입력해주세요.');return;}
+  if(!c){alert('위험 내용을 입력해주세요.');return;}
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spn"></span>접수 중...';
+
+  const entry={id:Date.now(),type:'safety',name:n,dept:d,content:c,
+    loc:document.getElementById('fl').value.trim(),
+    urgency:selU,cat:'',photo:photoData||null,
+    date:new Date().toLocaleDateString('ko-KR'),status:'new',conv:false,
+    aiLevel:null,aiReason:null};
+
+  // AI 분류
+  btn.innerHTML='<span class="spn"></span>AI 위험 분류 중...';
+  const classified=await classifyRisk(c, entry.loc, selU);
+  entry.aiLevel=classified.level;
+  entry.aiReason=classified.reason;
+
+  if(SHEET_URL){
+    try{await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({...entry,photo:'[첨부있음]'}),headers:{'Content-Type':'text/plain'}});}
+    catch(err){console.log('시트 전송 실패(로컬에는 저장됨):',err)}
+  }
+  V.unshift(entry);save();
+  btn.disabled=false;btn.innerHTML='제출하기';
+  document.getElementById('form-card').style.display='none';
+  document.getElementById('success-card').style.display='';
+
+  const resultDiv=document.getElementById('ai-classify-result');
+  const lvlEl=document.getElementById('ai-level-text');
+  const rsEl=document.getElementById('ai-reason-text');
+  const lvl=classified.level;
+  const icon=lvl==='즉시 조치'?'🔴':lvl==='주의'?'🟡':'🔵';
+  lvlEl.textContent=icon+' '+lvl;
+  rsEl.textContent=classified.reason;
+  resultDiv.style.display='';
+}
+
+function resetForm(){
+  document.getElementById('success-card').style.display='none';
+  document.getElementById('form-card').style.display='';
+  ['fn','fd','fcon','fl'].forEach(id=>document.getElementById(id).value='');
+  selU=null;
+  ['h','m','l'].forEach(x=>document.getElementById('u'+x).className='ubtn');
+  removePhoto();
+  document.getElementById('ai-classify-result').style.display='none';
+}
+
+/* ── 대시보드 ── */
+function renderDashboard(){
+  const total=V.length;
+  const imm=V.filter(v=>v.aiLevel==='즉시 조치').length;
+  const cau=V.filter(v=>v.aiLevel==='주의').length;
+  const obs=V.filter(v=>v.aiLevel==='관찰').length;
+  const noAI=V.filter(v=>!v.aiLevel).length;
+  const done=V.filter(v=>v.status==='done').length;
+  const conv=V.filter(v=>v.conv).length;
+  const depts=[...new Set(V.map(v=>v.dept).filter(d=>d&&d!=='익명'))];
+  const now=new Date().toLocaleDateString('ko-KR');
+
+  const recent=V.slice(0,5);
+  const feedHtml=recent.length?recent.map(v=>{
+    const icon=v.aiLevel==='즉시 조치'?'🔴':v.aiLevel==='주의'?'🟡':v.aiLevel==='관찰'?'🔵':'⚪';
+    const bg=v.aiLevel==='즉시 조치'?'#FFF0EE':v.aiLevel==='주의'?'#FFFBEB':v.aiLevel==='관찰'?'#EFF6FF':'#F5F5F7';
+    const preview=v.content.length>30?v.content.substring(0,30)+'…':v.content;
+    const who=v.dept;
+    return `<div class="feed-item">
+      <div class="feed-icon" style="background:${bg}">${icon}</div>
+      <div class="feed-body">
+        <div class="feed-title">${preview}</div>
+        <div class="feed-meta">${who}${v.loc?' · '+v.loc:''} · ${v.date} · ${v.status==='done'?'✅ 처리완료':v.conv?'⚡ 평가전환':'⏳ 처리중'}</div>
+      </div>
+    </div>`;
+  }).join(''):`<div style="font-size:13px;color:var(--ink3);padding:20px 0;text-align:center">아직 접수된 신고가 없습니다</div>`;
+
+  const riskMax=Math.max(imm,cau,obs,1);
+  const pct=n=>Math.round(n/riskMax*100);
+
+  document.getElementById('dashboard-content').innerHTML=`
+    <div class="dash-hero">
+      <div class="live-dot"><div class="live-pulse"></div>LIVE</div>
+      <h2>전사 안전 현황 대시보드</h2>
+      <p>기준일: ${now} · 전 직원 열람 가능</p>
+      <div class="dash-stats">
+        <div class="dash-sbox"><div class="dash-snum" style="color:#fff">${total}</div><div class="dash-slbl">전체 신고</div></div>
+        <div class="dash-sbox"><div class="dash-snum" style="color:#4ade80">${done}</div><div class="dash-slbl">처리완료</div></div>
+        <div class="dash-sbox"><div class="dash-snum" style="color:#f87171">${imm}</div><div class="dash-slbl">즉시조치</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px">AI 위험 등급 분포</div>
+      <div class="risk-bars">
+        <div class="risk-bar-row">
+          <div class="risk-bar-label" style="color:#991B1B">🔴 즉시조치</div>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${pct(imm)}%;background:#EF4444"></div></div>
+          <div class="risk-bar-count">${imm}</div>
+        </div>
+        <div class="risk-bar-row">
+          <div class="risk-bar-label" style="color:#92400E">🟡 주의</div>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${pct(cau)}%;background:#F59E0B"></div></div>
+          <div class="risk-bar-count">${cau}</div>
+        </div>
+        <div class="risk-bar-row">
+          <div class="risk-bar-label" style="color:#1E40AF">🔵 관찰</div>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${pct(obs)}%;background:#3B82F6"></div></div>
+          <div class="risk-bar-count">${obs}</div>
+        </div>
+        ${noAI?`<div class="risk-bar-row">
+          <div class="risk-bar-label">⚪ 미분류</div>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${pct(noAI)}%;background:#9EA5B0"></div></div>
+          <div class="risk-bar-count">${noAI}</div>
+        </div>`:''}
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px">참여 부서</div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:12px">${depts.length}개 부서 참여중</div>
+      <div class="dept-chips">
+        ${depts.length?depts.map(d=>`<span class="badge bgr">${d}</span>`).join(''):'<span style="font-size:13px;color:var(--ink3)">아직 없음</span>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px">최근 신고 현황</div>
+      ${feedHtml}
+    </div>
+  `;
+}
+
+/* ── 구글 시트 동기화 ── */
+async function loadVoicesFromSheets(){
+  if(!SHEET_URL) return false;
+  try{
+    const res=await fetch(SHEET_URL+'?action=list',{redirect:'follow'});
+    const data=await res.json();
+    if(data.result==='ok'&&Array.isArray(data.data)){V=data.data;return true;}
+  }catch(e){console.log('시트 로드 실패:',e);}
+  return false;
+}
+async function syncToSheets(id, status){
+  if(!SHEET_URL) return;
+  try{
+    await fetch(SHEET_URL,{method:'POST',
+      body:JSON.stringify({action:'update',id,status}),
+      headers:{'Content-Type':'text/plain'}});
+  }catch(e){console.log('시트 상태 업데이트 실패:',e);}
+}
+
+/* ── 관리자: 소리함 ── */
+function setVF(f,el){vf=f;document.querySelectorAll('#v-filters .fbtn').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderVoices()}
+function setRF(f,el){rf=f;document.querySelectorAll('#ra-filters .fbtn').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderRA()}
+
+async function renderVoices(){
+  const el=document.getElementById('v-list');
+  if(SHEET_URL){
+    el.innerHTML=`<div class="empty"><div style="margin-bottom:10px"><span class="spn" style="width:20px;height:20px;border-width:3px;margin:0"></span></div><div class="et">구글 시트에서 불러오는 중...</div></div>`;
+    await loadVoicesFromSheets();
+  }
+  const t=V.length,n=V.filter(v=>v.status==='new').length,c=V.filter(v=>v.conv).length;
+  const src=SHEET_URL?'<span style="font-size:11px;color:var(--ok);font-weight:600;margin-left:auto">● 구글 시트 연동됨</span>':'<span style="font-size:11px;color:var(--ink3);font-weight:600;margin-left:auto">○ 로컬 저장</span>';
+  document.getElementById('v-stats').innerHTML=`
+    <div class="sbox"><div class="snum">${t}</div><div class="slbl">전체 신고</div></div>
+    <div class="sbox"><div class="snum" style="color:var(--warn)">${n}</div><div class="slbl">미처리</div></div>
+    <div class="sbox"><div class="snum" style="color:var(--purple)">${c}</div><div class="slbl">평가전환</div></div>
+    <div class="sbox"><div class="snum" style="color:var(--ok)">${V.filter(v=>v.status==='done').length}</div><div class="slbl">처리완료</div></div>`;
+  document.querySelector('#v-filters').insertAdjacentHTML('beforeend', src);
+  let list=V;
+  if(vf==='new') list=V.filter(v=>v.status==='new');
+  else if(vf==='conv') list=V.filter(v=>v.conv);
+  else if(vf==='done') list=V.filter(v=>v.status==='done');
+  if(!list.length){el.innerHTML=`<div class="empty"><div class="ei">📭</div><div class="et">${SHEET_URL?'구글 시트에 접수된 내용이 없습니다':'접수된 내용이 없습니다'}</div></div>`;return;}
+  el.innerHTML=list.map(v=>{
+    const ub=v.urgency==='h'?'<span class="badge br">🔴 즉시조치</span>':v.urgency==='m'?'<span class="badge ba">🟡 빠른조치</span>':v.urgency==='l'?'<span class="badge bg">🟢 여유있음</span>':'';
+    const sb=v.status==='done'?'<span class="badge bg">✅ 처리완료</span>':v.conv?'<span class="badge bp">⚡ 평가전환됨</span>':'<span class="badge bgr">⏳ 미처리</span>';
+    const aib=v.aiLevel?`<span class="badge ${v.aiLevel==='즉시 조치'?'aibadge-imm':v.aiLevel==='주의'?'aibadge-cau':'aibadge-obs'}">🤖 ${v.aiLevel}</span>`:'';
+    const abar=v.aiReason?`<div class="ai-classify-bar"><span class="ai-icon">🤖</span><span>${v.aiLevel}: ${v.aiReason}</span></div>`:'';
+    const photoHtml=v.photo?`<div class="vphoto"><img src="${v.photo}" alt="신고 사진"/></div>`:'';
+    const cb=!v.conv
+      ?`<button class="btn btn-sm btn-p" id="cvb-${v.id}" onclick="convertToRA(${v.id})">위험성평가로 전환 →</button>`
+      :`<span style="font-size:12px;color:var(--purple);font-weight:600">⚡ 위험성평가로 전환됨</span>`;
+    const db=v.status==='new'&&!v.conv?`<button class="btn btn-sm" onclick="vDone(${v.id})">처리완료</button>`:'';
+    return `<div class="vitem" id="vi-${v.id}">
+      <div class="vbadges">${ub}${aib}${sb}</div>
+      ${photoHtml}
+      <div class="vbody">${v.content}</div>
+      ${abar}
+      <div class="vmeta">👤 ${v.name} · ${v.dept}${v.loc?' · 📍'+v.loc:''} · ${v.date}</div>
+      <div class="vactions">${cb}${db}</div>
+    </div>`;
+  }).join('');
+}
+
+async function convertToRA(id){
+  const v=V.find(x=>x.id===id);if(!v)return;
+  const btn=document.getElementById('cvb-'+id);
+  if(btn){btn.disabled=true;btn.innerHTML=`<span class="spn"></span>AI 분석 중...`;}
+  if(!API_KEY){
+    RA.unshift({id:Date.now(),source:'voice',vid:v.id,reporter:v.name,dept:v.dept,loc:v.loc,date:v.date,
+      riskTitle:v.content.substring(0,20)+'...',level:v.urgency==='h'?'상':v.urgency==='m'?'중':'하',
+      category:'기타',description:v.content,
+      frequency:3,severity:3,measures:['현장 즉시 확인','조치 계획 수립','재발 방지 교육'],status:'open'});
+    v.conv=true;v.status='converted';save();syncToSheets(v.id,'평가전환됨');renderVoices();
+    if(btn){btn.disabled=false;}
+    return;
+  }
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,
+        messages:[{role:'user',content:`산업안전보건법 기반 위험성평가 전문가입니다. 아래 직원 안전신고를 위험성평가 항목으로 변환하세요.
+신고자: ${v.name} (${v.dept}) / 장소: ${v.loc||'미기재'} / 내용: ${v.content}
+JSON만 응답 (마크다운 없이):
+{"riskTitle":"위험요인명","level":"상 또는 중 또는 하","category":"분류(근골격계/추락·충돌/화재·전기/위생·환경/심리 등)","description":"위험상황 설명 2문장","frequency":3,"severity":4,"measures":["대책1","대책2","대책3"]}`}]})});
+    const data=await res.json();
+    const txt=data.content.map(i=>i.text||'').join('');
+    const p=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    RA.unshift({id:Date.now(),source:'voice',vid:v.id,reporter:v.name,dept:v.dept,loc:v.loc,date:v.date,
+      riskTitle:p.riskTitle,level:p.level,category:p.category,description:p.description,
+      frequency:p.frequency,severity:p.severity,measures:p.measures,status:'open'});
+    v.conv=true;v.status='converted';save();syncToSheets(v.id,'평가전환됨');renderVoices();
+  }catch(e){if(btn){btn.disabled=false;btn.innerHTML='위험성평가로 전환 →';}}
+}
+function vDone(id){const v=V.find(x=>x.id===id);if(v){v.status='done';save();syncToSheets(id,'처리완료');renderVoices();}}
+
+/* ── 관리자: 위험성평가 ── */
+function toggleDirectRA(){
+  const f=document.getElementById('direct-ra-form');
+  f.style.display=f.style.display==='none'?'':'none';
+}
+async function runDirectRA(){
+  const dept=document.getElementById('ra-dept').value.trim();
+  const wtype=document.getElementById('ra-wtype').value;
+  const desc=document.getElementById('ra-desc').value.trim();
+  if(!desc){alert('작업 설명을 입력해주세요.');return;}
+  if(!API_KEY){alert('설정 탭에서 Claude API 키를 먼저 입력해주세요.');return;}
+  const btn=document.querySelector('#direct-ra-form .btn-p');
+  btn.disabled=true;btn.innerHTML=`<span class="spn"></span>AI 분석 중...`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,
+        messages:[{role:'user',content:`산업안전보건법 기반 위험성평가 전문가로서 아래 작업을 분석해 위험요인 3~4개를 도출하세요.
+부서: ${dept||'미입력'} / 작업유형: ${wtype||'미입력'} / 작업설명: ${desc}
+JSON만 응답 (마크다운 없이):
+{"risks":[{"riskTitle":"위험요인명","level":"상 또는 중 또는 하","category":"분류","description":"설명 2문장","frequency":3,"severity":4,"measures":["대책1","대책2","대책3"]}]}`}]})});
+    const data=await res.json();
+    const txt=data.content.map(i=>i.text||'').join('');
+    const p=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    const today=new Date().toLocaleDateString('ko-KR');
+    p.risks.forEach(r=>{
+      RA.unshift({id:Date.now()+Math.random(),source:'direct',dept:dept,date:today,
+        riskTitle:r.riskTitle,level:r.level,category:r.category,description:r.description,
+        frequency:r.frequency,severity:r.severity,measures:r.measures,status:'open'});
+    });
+    save();toggleDirectRA();
+    document.getElementById('ra-dept').value='';
+    document.getElementById('ra-wtype').value='';
+    document.getElementById('ra-desc').value='';
+    renderRA();
+  }catch(e){alert('분석 중 오류가 발생했습니다.');}
+  finally{btn.disabled=false;btn.innerHTML='AI 위험요인 분석하기 →';}
+}
+
+function renderRA(){
+  const t=RA.length,h=RA.filter(r=>r.level==='상').length;
+  const o=RA.filter(r=>r.status==='open').length,c=RA.filter(r=>r.status==='closed').length;
+  document.getElementById('ra-stats').innerHTML=`
+    <div class="sbox"><div class="snum">${t}</div><div class="slbl">전체 항목</div></div>
+    <div class="sbox"><div class="snum" style="color:var(--red)">${h}</div><div class="slbl">위험(상)</div></div>
+    <div class="sbox"><div class="snum" style="color:var(--warn)">${o}</div><div class="slbl">미결</div></div>
+    <div class="sbox"><div class="snum" style="color:var(--ok)">${c}</div><div class="slbl">완료</div></div>`;
+  let list=RA;
+  if(rf==='high') list=RA.filter(r=>r.level==='상');
+  else if(rf==='mid') list=RA.filter(r=>r.level==='중');
+  else if(rf==='low') list=RA.filter(r=>r.level==='하');
+  else if(rf==='open') list=RA.filter(r=>r.status==='open');
+  else if(rf==='closed') list=RA.filter(r=>r.status==='closed');
+  const el=document.getElementById('ra-list');
+  if(!list.length){el.innerHTML=`<div class="empty"><div class="ei">📋</div><div class="et">소리함 안전신고를 위험성평가로 전환하거나<br>직접 입력해 분석받으세요</div></div>`;return;}
+  el.innerHTML=list.map(r=>{
+    const lb=r.level==='상'?'<span class="badge br">🔴 위험 상</span>':r.level==='중'?'<span class="badge ba">🟡 위험 중</span>':'<span class="badge bg">🟢 위험 하</span>';
+    const sb=r.status==='closed'?'<span class="badge bg">✅ 완료</span>':'<span class="badge bgr">⏳ 미결</span>';
+    const src=r.source==='voice'?'<span class="badge bp">📢 근로자 신고</span>':'<span class="badge bb">📝 직접 입력</span>';
+    const sc=Math.round((r.frequency||3)*(r.severity||3));
+    const m=Array.isArray(r.measures)?r.measures:[];
+    const reporter=r.source==='voice'
+      ?`<div class="rbar">📢 근로자 신고: ${r.reporter} (${r.dept})${r.loc?' · 📍'+r.loc:''} · ${r.date}</div>`
+      :`<div class="rbar">📝 직접 입력: ${r.dept||'부서 미입력'} · ${r.date}</div>`;
+    const cb=r.status==='open'?`<button class="btn btn-sm" style="margin-top:12px" onclick="closeRA(${r.id})">✅ 개선완료 처리</button>`:'';
+    return `<div class="raitem">
+      <div style="display:flex;gap:5px;flex-wrap:wrap">${lb}${sb}${src}<span class="badge bgr">${r.category||''}</span></div>
+      <div class="ratitle">${r.riskTitle}</div>
+      <div class="radesc">${r.description}</div>
+      <div class="score-row">
+        <span class="spill">빈도 ${r.frequency}/5</span>
+        <span class="spill">강도 ${r.severity}/5</span>
+        <span class="spill">위험점수 ${sc}</span>
+      </div>
+      ${reporter}
+      <div class="divl"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">개선 대책</div>
+      <ul class="mlist">${m.map(x=>`<li>${x}</li>`).join('')}</ul>
+      ${cb}
+    </div>`;
+  }).join('');
+}
+function closeRA(id){const r=RA.find(x=>x.id===id);if(r){r.status='closed';save();renderRA();}}
+
+/* ── 관리자: 참여 현황 ── */
+function renderReport(){
+  const total=V.length;
+  const conv=V.filter(v=>v.conv).length,closed=RA.filter(r=>r.status==='closed').length;
+  const open=RA.filter(r=>r.status==='open').length;
+  const depts=[...new Set(V.map(v=>v.dept).filter(Boolean))];
+  const now=new Date().toLocaleDateString('ko-KR');
+  document.getElementById('report-content').innerHTML=`
+    <div class="report-hero">
+      <h2>근로자 참여 위험성평가 현황</h2>
+      <p>기준일: ${now} · 고용노동부 위험성평가 근로자 참여 근거 자료</p>
+      <div class="rs">
+        <div class="rsbox"><div class="rsnum">${total}</div><div class="rslbl">전체 신고</div></div>
+        <div class="rsbox"><div class="rsnum">${conv}</div><div class="rslbl">위험성평가 전환</div></div>
+        <div class="rsbox"><div class="rsnum">${open}</div><div class="rslbl">조치 진행중</div></div>
+        <div class="rsbox"><div class="rsnum">${closed}</div><div class="rslbl">개선 완료</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">참여 부서</div>
+      <div class="dept-chips">
+        ${depts.length?depts.map(d=>`<span class="badge bgr">${d}</span>`).join(''):'<span style="font-size:13px;color:var(--ink3)">아직 없음</span>'}
+      </div>
+      <div class="divl"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">위험성평가 항목별 근로자 신고 이력</div>
+      ${RA.filter(r=>r.source==='voice').length
+        ?RA.filter(r=>r.source==='voice').map(r=>`
+          <div style="padding:11px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <span style="font-size:14px;font-weight:600;color:var(--ink)">${r.riskTitle}</span>
+              ${r.level==='상'?'<span class="badge br">위험 상</span>':r.level==='중'?'<span class="badge ba">위험 중</span>':'<span class="badge bg">위험 하</span>'}
+            </div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:3px">신고: ${r.reporter} (${r.dept}) · ${r.date} · ${r.status==='closed'?'✅ 개선완료':'⏳ 조치중'}</div>
+          </div>`).join('')
+        :'<div style="font-size:13px;color:var(--ink3);padding:1rem 0">위험성평가 전환 항목이 없습니다.</div>'}
+    </div>
+    <div class="info-bar">
+      💡 이 데이터는 고용노동부 위험성평가 인정 심사 시 <strong>근로자 참여 증빙 자료</strong>로 활용 가능합니다.
+    </div>`;
+}
+
+/* ── 설정 ── */
+function saveApiKey(){
+  const key=document.getElementById('api-key-input').value.trim();
+  if(!key){alert('API 키를 입력해주세요.');return;}
+  API_KEY=key;
+  localStorage.setItem('tt_api_key',key);
+  const st=document.getElementById('api-key-status');
+  st.textContent='✅ 저장됨 — AI 기능이 활성화되었습니다';
+  st.style.color='var(--ok)';
+}
+
+function initSetup(){
+  const url=SHEET_URL;
+  document.getElementById('sheet-url').value=url;
+  const bar=document.getElementById('connected-bar');
+  const prev=document.getElementById('conn-url-preview');
+  if(url){bar.style.display='flex';prev.textContent=url.substring(0,40)+'...';}
+  else{bar.style.display='none';}
+  if(API_KEY){
+    document.getElementById('api-key-input').value=API_KEY;
+    const st=document.getElementById('api-key-status');
+    st.textContent='✅ API 키 저장됨';st.style.color='var(--ok)';
+  }
+}
+
+function saveSheetURL(){
+  const url=document.getElementById('sheet-url').value.trim();
+  if(!url){alert('URL을 입력해주세요.');return;}
+  if(!url.startsWith('https://script.google.com')){alert('올바른 Apps Script URL이 아닙니다.');return;}
+  SHEET_URL=url;
+  localStorage.setItem('tt_sheet_url',url);
+  initSetup();
+  const st=document.getElementById('url-status');
+  st.style.display='';st.style.color='var(--ok)';st.textContent='✅ 저장되었습니다! 이제 제보가 구글 시트에 자동으로 저장됩니다.';
+  setTimeout(()=>st.style.display='none',3000);
+}
+
+async function testConnection(){
+  const url=document.getElementById('sheet-url').value.trim();
+  if(!url){alert('URL을 먼저 입력해주세요.');return;}
+  const st=document.getElementById('url-status');
+  st.style.display='';st.style.color='var(--ink2)';st.innerHTML='<span class="spn"></span>연결 테스트 중...';
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.result==='ok'){st.style.color='var(--ok)';st.textContent='✅ 연결 성공! 구글 시트와 정상 연결되었습니다.';}
+    else{st.style.color='var(--warn)';st.textContent='⚠️ 응답은 받았지만 확인이 필요합니다.';}
+  }catch(e){st.style.color='var(--red)';st.textContent='❌ 연결 실패. URL을 다시 확인해주세요.';}
+}
+
+function changePW(){
+  const p1=document.getElementById('new-pw1').value;
+  const p2=document.getElementById('new-pw2').value;
+  if(!p1||!p2){alert('새 비밀번호를 입력해주세요.');return;}
+  if(p1!==p2){alert('비밀번호가 일치하지 않습니다.');return;}
+  if(p1.length<4){alert('비밀번호는 4자 이상이어야 합니다.');return;}
+  ADMIN_PW=p1;localStorage.setItem('tt_pw',p1);
+  document.getElementById('new-pw1').value='';
+  document.getElementById('new-pw2').value='';
+  alert('✅ 비밀번호가 변경되었습니다.');
+}
+
+// 샘플 데이터
+if(!V.length){
+  V=[
+    {id:1,type:'safety',name:'김민수',dept:'물류팀',content:'창고 입구 바닥에 물이 새어 미끄럼 사고 위험이 있습니다. 비가 올 때마다 반복됩니다.',loc:'1층 창고 입구',urgency:'h',cat:'',photo:null,date:'2026-04-28',status:'new',conv:false,aiLevel:'즉시 조치',aiReason:'바닥 누수로 인한 미끄럼 낙상 위험이 즉각적입니다.'},
+    {id:3,type:'safety',name:'박성호',dept:'총무팀',content:'복도 비상구 앞에 박스가 쌓여 통로가 막혀 있습니다. 화재 시 대피에 문제가 생길 수 있습니다.',loc:'2층 비상구 앞',urgency:'h',cat:'',photo:null,date:'2026-04-26',status:'converted',conv:true,aiLevel:'즉시 조치',aiReason:'화재 대피 통로 차단은 즉각적인 생명 위협 요소입니다.'}
+  ];
+  RA=[{id:101,source:'voice',vid:3,reporter:'박성호',dept:'총무팀',loc:'2층 비상구 앞',date:'2026-04-26',
+    riskTitle:'비상구 통로 막힘으로 인한 대피 장애',level:'상',category:'화재·전기',
+    description:'비상구 앞 박스 적재로 대피 통로가 차단되어 있습니다. 화재 발생 시 신속한 대피가 불가능하여 인명 피해 우려가 높습니다.',
+    frequency:4,severity:5,measures:['즉시 비상구 앞 적재물 제거 조치','비상구 주변 2m 이내 적재 금지 표지판 부착','월 1회 비상구 통로 점검 및 기록 체계 수립'],status:'open'}];
+  save();
+}
+</script>
+</body>
+</html>
